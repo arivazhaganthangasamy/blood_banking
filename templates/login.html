@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Login - LifeStream{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-page {
+  min-height: calc(100vh - 64px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem; position: relative;
+}
+.auth-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.auth-bg::before {
+  content: ''; position: absolute;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  animation: breathe 5s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+.auth-container {
+  width: 100%; max-width: 460px; position: relative; z-index: 1;
+}
+.auth-header { text-align: center; margin-bottom: 2rem; }
+.auth-logo {
+  width: 64px; height: 64px; margin: 0 auto 1rem;
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  clip-path: polygon(50% 0%, 100% 60%, 80% 100%, 20% 100%, 0% 60%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  animation: pulse-drop 2s ease-in-out infinite;
+}
+.auth-header h1 {
+  font-family: 'Playfair Display', serif; font-size: 1.9rem;
+  margin-bottom: 0.3rem;
+}
+.auth-header p { color: rgba(255,255,255,0.5); font-size: 0.88rem; }
+.auth-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 20px; padding: 2.5rem;
+  backdrop-filter: blur(12px);
+}
+.divider {
+  display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;
+  color: rgba(255,255,255,0.3); font-size: 0.8rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+}
+.auth-footer { text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.5); font-size: 0.88rem; }
+.auth-footer a { color: var(--red-light); text-decoration: none; font-weight: 600; }
+.role-toggle {
+  display: flex; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 4px; margin-bottom: 1.5rem;
+}
+.role-btn {
+  flex: 1; padding: 0.6rem; border: none; background: none;
+  color: rgba(255,255,255,0.5); border-radius: 8px; cursor: pointer;
+  font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600;
+  transition: all 0.2s;
+}
+.role-btn.active { background: var(--red); color: white; }
+.pass-wrap { position: relative; }
+.pass-toggle {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer;
+  font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="auth-logo">🩸</div>
+      <h1>Welcome Back</h1>
+      <p>Login to your LifeStream account</p>
+    </div>
+    <div class="auth-card">
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="pass-wrap">
+            <input type="password" name="password" id="pass" placeholder="Enter password" required>
+            <button type="button" class="pass-toggle" onclick="togglePass()"><i class="fas fa-eye" id="eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;">
+          <i class="fas fa-sign-in-alt"></i> Login to LifeStream
+        </button>
+      </form>
+      <div class="auth-footer">
+        Don't have an account? <a href="{{ url_for('signup') }}">Sign up free</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePass() {
+  const p = document.getElementById('pass');
+  const e = document.getElementById('eye');
+  if (p.type === 'password') { p.type = 'text'; e.className = 'fas fa-eye-slash'; }
+  else { p.type = 'password'; e.className = 'fas fa-eye'; }
+}
+</script>
+{% endblock %}

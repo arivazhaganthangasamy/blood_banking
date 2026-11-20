@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - LifeStream{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-hero {
+  background: linear-gradient(135deg, rgba(192,57,43,0.15), rgba(26,10,10,0.8));
+  border-bottom: 1px solid rgba(192,57,43,0.2);
+  padding: 3rem 2rem;
+}
+.dash-header { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; }
+.avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 900; border: 3px solid rgba(192,57,43,0.4);
+}
+.dash-header h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; }
+.dash-header p { color: rgba(255,255,255,0.5); font-size: 0.88rem; }
+.badge-role {
+  display: inline-block; padding: 3px 12px; border-radius: 20px;
+  background: rgba(192,57,43,0.2); border: 1px solid rgba(192,57,43,0.4);
+  font-size: 0.72rem; color: var(--red-light); font-weight: 700; text-transform: uppercase;
+}
+.action-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;
+}
+.action-card {
+  border-radius: 20px; padding: 2.5rem;
+  text-decoration: none; color: white;
+  position: relative; overflow: hidden;
+  transition: all 0.3s; border: 1px solid transparent;
+  display: block;
+}
+.action-card.donate-card {
+  background: linear-gradient(135deg, #8b0000, #c0392b);
+  box-shadow: 0 8px 32px rgba(192,57,43,0.35);
+}
+.action-card.need-card {
+  background: linear-gradient(135deg, #1a3a5c, #2980b9);
+  box-shadow: 0 8px 32px rgba(41,128,185,0.25);
+}
+.action-card::before {
+  content: ''; position: absolute; top: -50%; right: -20%;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.action-card:hover { transform: translateY(-6px) scale(1.02); }
+.action-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+.action-card h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.5rem; }
+.action-card p { opacity: 0.8; font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem; }
+.action-arrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+}
+.quick-links { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+.quick-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.6rem 1.2rem; border-radius: 10px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.quick-link:hover { background: rgba(192,57,43,0.15); border-color: var(--red); color: white; }
+.info-card {
+  background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 16px; padding: 1.5rem; margin-top: 2rem;
+}
+.info-card h3 { color: var(--red-light); margin-bottom: 1rem; }
+.rule-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 0.8rem; font-size: 0.9rem; }
+.rule-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); margin-top: 5px; flex-shrink: 0; }
+@media (max-width: 600px) { .action-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+  <div class="dash-header">
+    <div class="avatar">{{ session.username[0].upper() }}</div>
+    <div>
+      <h1>Hello, {{ session.username }}!</h1>
+      <p>Welcome to your LifeStream dashboard</p>
+      <span class="badge-role">🩸 Donor</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title">What would you like to <span>do today?</span></h2>
+  <p class="section-sub">Choose an action below</p>
+
+  <div class="action-grid">
+    <a href="{{ url_for('donate') }}" class="action-card donate-card">
+      <span class="action-icon">🩸</span>
+      <h2>Donate Blood</h2>
+      <p>Register your blood donation at a Chennai blood bank. Your donation helps save up to 3 lives. Eligible every 8 weeks.</p>
+      <div class="action-arrow">Donate Now <i class="fas fa-arrow-right"></i></div>
+    </a>
+    <a href="{{ url_for('need_blood') }}" class="action-card need-card">
+      <span class="action-icon">🔍</span>
+      <h2>Need Blood</h2>
+      <p>Find available blood banks in Chennai by blood type. Get contact numbers, locations and add to wishlist for alerts.</p>
+      <div class="action-arrow">Find Blood <i class="fas fa-arrow-right"></i></div>
+    </a>
+  </div>
+
+  <div class="quick-links">
+    <a href="{{ url_for('view_wishlist') }}" class="quick-link"><i class="fas fa-heart" style="color:var(--red-light)"></i> My Wishlist</a>
+    <a href="{{ url_for('about') }}" class="quick-link"><i class="fas fa-info-circle"></i> About Project</a>
+    <a href="{{ url_for('need_blood') }}" class="quick-link"><i class="fas fa-map-marker-alt"></i> All Blood Banks</a>
+  </div>
+
+  <div class="info-card">
+    <h3><i class="fas fa-info-circle"></i> Important Donation Guidelines</h3>
+    <div class="rule-item"><div class="rule-dot"></div><span>You can donate whole blood once every <strong>8 weeks (56 days)</strong>.</span></div>
+    <div class="rule-item"><div class="rule-dot"></div><span>You must be at least <strong>17–18 years old</strong> (varies by state) and weigh at least <strong>50 kg</strong>.</span></div>
+    <div class="rule-item"><div class="rule-dot"></div><span>Each donation can save up to <strong>3 lives</strong>.</span></div>
+    <div class="rule-item"><div class="rule-dot"></div><span>Drink extra fluids and eat a healthy meal before donating.</span></div>
+    <div class="rule-item"><div class="rule-dot"></div><span>Avoid strenuous activity for <strong>24 hours</strong> after donating.</span></div>
+  </div>
+</div>
+{% endblock %}

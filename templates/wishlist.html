@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}My Wishlist - LifeStream{% endblock %}
+
+{% block extra_css %}
+<style>
+.wishlist-hero {
+  background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(26,10,10,0.9));
+  padding: 3rem 2rem; text-align: center;
+  border-bottom: 1px solid rgba(192,57,43,0.2);
+}
+.wishlist-hero h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; }
+.wishlist-hero p { color: rgba(255,255,255,0.5); }
+.wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.wish-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 16px; padding: 1.5rem; position: relative;
+  transition: all 0.3s;
+}
+.wish-card:hover { border-color: var(--red); transform: translateY(-3px); }
+.wish-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.wish-blood {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 0.9rem;
+  box-shadow: 0 4px 15px var(--red-glow);
+}
+.wish-remove {
+  background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer;
+  font-size: 0.85rem; transition: color 0.2s;
+}
+.wish-remove:hover { color: var(--red-light); }
+.wish-card h3 { font-size: 0.95rem; margin: 1rem 0 0.3rem; }
+.wish-meta { font-size: 0.8rem; color: rgba(255,255,255,0.45); }
+.wish-date { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.8rem; }
+.status-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700; background: rgba(192,57,43,0.2);
+  border: 1px solid rgba(192,57,43,0.3); color: var(--red-light); margin-top: 6px;
+}
+.empty-wishlist { text-align: center; padding: 5rem 2rem; }
+.empty-wishlist .icon { font-size: 5rem; opacity: 0.3; margin-bottom: 1.5rem; }
+.empty-wishlist h2 { color: rgba(255,255,255,0.6); margin-bottom: 0.5rem; }
+.empty-wishlist p { color: rgba(255,255,255,0.35); margin-bottom: 2rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wishlist-hero">
+  <h1>My <span style="color:var(--red-light)">Wishlist</span> ❤️</h1>
+  <p>Blood banks you're tracking for availability</p>
+</div>
+
+<div class="section">
+  {% if wishlist %}
+  <div class="results-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <h2 class="section-title"><span>{{ wishlist|length }}</span> items saved</h2>
+    <a href="{{ url_for('need_blood') }}" class="btn btn-outline btn-sm" style="padding:0.5rem 1rem;font-size:0.85rem;">
+      <i class="fas fa-plus"></i> Add More
+    </a>
+  </div>
+  <div class="wishlist-grid">
+    {% for item in wishlist %}
+    <div class="wish-card reveal">
+      <div class="wish-header">
+        <div class="wish-blood">{{ item.blood_type }}</div>
+        <form method="GET" action="{{ url_for('remove_wishlist', item_id=item.id) }}" style="display:inline">
+          <button class="wish-remove" title="Remove"><i class="fas fa-times"></i></button>
+        </form>
+      </div>
+      <h3>{{ item.blood_bank_name }}</h3>
+      <div class="wish-meta"><i class="fas fa-tint" style="color:var(--red-light)"></i> Blood Type: {{ item.blood_type }}</div>
+      <div class="status-badge">⏳ Monitoring</div>
+      <div class="wish-date"><i class="fas fa-calendar"></i> Added {{ item.added_date }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-wishlist">
+    <div class="icon">💔</div>
+    <h2>Your wishlist is empty</h2>
+    <p>When you find a blood type you need, click "Wishlist" to track it here.</p>
+    <a href="{{ url_for('need_blood') }}" class="btn btn-primary"><i class="fas fa-search"></i> Find Blood</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Donate Blood - LifeStream{% endblock %}
+
+{% block extra_css %}
+<style>
+.donate-hero {
+  background: linear-gradient(135deg, rgba(139,0,0,0.4), rgba(26,10,10,0.9));
+  padding: 4rem 2rem; text-align: center;
+  border-bottom: 1px solid rgba(192,57,43,0.3);
+  position: relative; overflow: hidden;
+}
+.donate-hero::before {
+  content: '🩸'; position: absolute; font-size: 20rem;
+  opacity: 0.04; top: -2rem; right: -3rem;
+  animation: floatDrop 6s ease-in-out infinite;
+}
+@keyframes floatDrop { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(5deg)} }
+.donate-hero h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+.donate-hero p { color: rgba(255,255,255,0.6); }
+
+.donate-layout { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
+
+/* Bank selection */
+.banks-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;
+  max-height: 480px; overflow-y: auto; padding-right: 4px;
+}
+.banks-grid::-webkit-scrollbar { width: 4px; }
+.banks-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.banks-grid::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+.bank-option { position: relative; }
+.bank-option input[type=radio] { display: none; }
+.bank-label {
+  display: block; padding: 1rem; border: 2px solid rgba(192,57,43,0.2);
+  border-radius: 12px; cursor: pointer; transition: all 0.2s;
+  background: rgba(255,255,255,0.03);
+}
+.bank-option input:checked + .bank-label {
+  border-color: var(--red); background: rgba(192,57,43,0.12);
+}
+.bank-label:hover { border-color: rgba(192,57,43,0.5); }
+.bank-name { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+.bank-loc { font-size: 0.76rem; color: rgba(255,255,255,0.5); }
+.bank-contact { font-size: 0.76rem; color: var(--red-light); margin-top: 4px; }
+.bank-check {
+  position: absolute; top: 8px; right: 8px; width: 20px; height: 20px;
+  background: var(--red); border-radius: 50%;
+  display: none; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+}
+.bank-option input:checked ~ .bank-check { display: flex; }
+
+/* Form panel */
+.form-panel {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 16px; padding: 2rem; position: sticky; top: 80px;
+}
+.selected-bank-display {
+  background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.3);
+  border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+.selected-bank-display strong { color: var(--red-light); display: block; }
+.timeline {
+  display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap;
+}
+.timeline-item {
+  flex: 1; background: rgba(255,255,255,0.05);
+  border-radius: 8px; padding: 0.5rem; text-align: center;
+  font-size: 0.72rem;
+}
+.timeline-item .tl-date { color: var(--gold); font-weight: 700; }
+@media (max-width: 900px) { .donate-layout { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="donate-hero">
+  <h1>Donate <span style="color:var(--red-light)">Blood</span></h1>
+  <p>Choose a Chennai blood bank and register your donation</p>
+</div>
+
+<div class="section">
+  <form method="POST" action="{{ url_for('donate') }}" id="donateForm">
+    <div class="donate-layout">
+      <!-- LEFT: Bank selection -->
+      <div>
+        <h3 style="margin-bottom:1rem;font-size:1rem;color:rgba(255,255,255,0.7);">
+          <i class="fas fa-hospital-alt" style="color:var(--red-light)"></i> Select a Blood Bank in Chennai
+        </h3>
+        <div class="banks-grid">
+          {% for bank in blood_banks %}
+          <div class="bank-option">
+            <input type="radio" name="bank_select" id="bank{{ bank.id }}" value="{{ bank.id }}"
+                   data-name="{{ bank.name }}"
+                   onchange="selectBank({{ bank.id }}, '{{ bank.name }}', '{{ bank.location }}', '{{ bank.contact }}')">
+            <label for="bank{{ bank.id }}" class="bank-label">
+              <div class="bank-name">{{ bank.name }}</div>
+              <div class="bank-loc"><i class="fas fa-map-marker-alt"></i> {{ bank.location }}</div>
+              <div class="bank-contact"><i class="fas fa-phone"></i> {{ bank.contact }}</div>
+              <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">
+                {% for bt in bank.blood_types %}
+                <span style="background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.3);padding:1px 6px;border-radius:4px;font-size:0.68rem;font-weight:700;">{{ bt }}</span>
+                {% endfor %}
+              </div>
+            </label>
+            <div class="bank-check">✓</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RIGHT: Form -->
+      <div class="form-panel">
+        <h3 style="margin-bottom:1.5rem;font-family:'Playfair Display',serif;">Your Details</h3>
+        <div id="selectedBankDisplay" class="selected-bank-display" style="display:none">
+          <strong id="selBankName">—</strong>
+          <span id="selBankLoc" style="color:rgba(255,255,255,0.6)"></span>
+        </div>
+        <input type="hidden" name="blood_bank_id" id="blood_bank_id">
+        <input type="hidden" name="blood_bank_name" id="blood_bank_name">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+        </div>
+        <div class="form-group">
+          <label>Blood Type</label>
+          <select name="blood_type" required>
+            <option value="">Select blood type</option>
+            {% for bt in ['A+','A-','B+','B-','O+','O-','AB+','AB-'] %}
+            <option value="{{ bt }}">{{ bt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="tl-date" id="todayDate">Today</div>
+            <div>Donation</div>
+          </div>
+          <div style="display:flex;align-items:center;color:rgba(255,255,255,0.3);font-size:0.8rem;">→</div>
+          <div class="timeline-item">
+            <div class="tl-date" id="nextDate">+8 weeks</div>
+            <div>Next eligible</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.5rem;" id="submitBtn" disabled>
+          <i class="fas fa-tint"></i> Register Donation
+        </button>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">
+          Please select a blood bank first
+        </p>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function selectBank(id, name, loc, contact) {
+  document.getElementById('blood_bank_id').value = id;
+  document.getElementById('blood_bank_name').value = name;
+  const display = document.getElementById('selectedBankDisplay');
+  display.style.display = 'block';
+  document.getElementById('selBankName').textContent = name;
+  document.getElementById('selBankLoc').textContent = '📍 ' + loc + '  📞 ' + contact;
+  document.getElementById('submitBtn').disabled = false;
+  document.querySelector('#submitBtn + p').textContent = 'Selected: ' + name;
+}
+// Set dates
+const today = new Date();
+document.getElementById('todayDate').textContent = today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+const next = new Date(today); next.setDate(next.getDate() + 56);
+document.getElementById('nextDate').textContent = next.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+</script>
+{% endblock %}

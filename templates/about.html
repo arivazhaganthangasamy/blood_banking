@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}About - LifeStream{% endblock %}
+
+{% block extra_css %}
+<style>
+.about-hero {
+  background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(26,10,10,0.95));
+  padding: 5rem 2rem; text-align: center; position: relative; overflow: hidden;
+}
+.about-hero::before {
+  content: ''; position: absolute; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(192,57,43,0.15) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+}
+.about-hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; position: relative; }
+.about-hero p { color: rgba(255,255,255,0.6); max-width: 600px; margin: 1rem auto 0; line-height: 1.7; position: relative; }
+
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+.feature-item {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(192,57,43,0.15);
+  border-radius: 16px; padding: 2rem; position: relative; overflow: hidden;
+  transition: all 0.3s;
+}
+.feature-item:hover { border-color: rgba(192,57,43,0.4); transform: translateY(-4px); }
+.feature-item::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--red), transparent);
+}
+.fi-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.fi-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  background: rgba(192,57,43,0.15); color: var(--red-light); margin-bottom: 0.5rem;
+}
+.feature-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.feature-item p { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+.tech-stack { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem; }
+.tech-badge {
+  padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+}
+
+.module-accordion { margin-top: 1.5rem; }
+.module-item {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(192,57,43,0.15);
+  border-radius: 12px; margin-bottom: 0.8rem; overflow: hidden;
+}
+.module-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem; cursor: pointer; user-select: none;
+  transition: background 0.2s;
+}
+.module-header:hover { background: rgba(192,57,43,0.08); }
+.module-header h3 { font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+.module-body { padding: 0 1.5rem 1rem; display: none; font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.7; }
+.module-body.open { display: block; }
+.module-item.active .module-header { background: rgba(192,57,43,0.1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-hero">
+  <h1>About <span style="color:var(--red-light)">LifeStream</span></h1>
+  <p>A comprehensive Blood Donation Management System built for Chennai — connecting donors, patients, and blood banks in one powerful platform.</p>
+</div>
+
+<div class="section">
+  <h2 class="section-title reveal">Project <span>Overview</span></h2>
+  <p class="section-sub reveal">LifeStream is a full-stack web application using Flask & Python</p>
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(192,57,43,0.2);border-radius:16px;padding:2rem;margin-top:1.5rem;" class="reveal">
+    <p style="line-height:1.8;color:rgba(255,255,255,0.75);">
+      LifeStream is designed to bridge the gap between blood donors and recipients in Chennai. It features a <strong style="color:white">dual-role system</strong> — hospitals can manage and upload blood inventory, while users can register as donors or search for needed blood types. All data is stored securely in <strong style="color:white">Excel sheets</strong> for easy management and reporting.
+    </p>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title reveal">Key <span>Features</span></h2>
+  <div class="feature-grid">
+    <div class="feature-item reveal">
+      <div class="fi-icon">🔐</div>
+      <div class="fi-tag">Auth Module</div>
+      <h3>Login & Sign Up</h3>
+      <p>Secure authentication with role-based access for hospitals and individual users. Passwords are hashed using Werkzeug.</p>
+    </div>
+    <div class="feature-item reveal">
+      <div class="fi-icon">🏥</div>
+      <div class="fi-tag">Hospital Module</div>
+      <h3>Hospital Dashboard</h3>
+      <p>Hospitals can upload blood availability by type, location and contact. View and manage their complete blood inventory.</p>
+    </div>
+    <div class="feature-item reveal">
+      <div class="fi-icon">🩸</div>
+      <div class="fi-tag">Donor Module</div>
+      <h3>Blood Donation</h3>
+      <p>Users can register donations at any Chennai blood bank. System enforces the 8-week (56-day) rule between donations.</p>
+    </div>
+    <div class="feature-item reveal">
+      <div class="fi-icon">🔍</div>
+      <div class="fi-tag">Search Module</div>
+      <h3>Find Blood</h3>
+      <p>Search available blood by type across 10+ Chennai blood banks. See contact numbers and locations instantly.</p>
+    </div>
+    <div class="feature-item reveal">
+      <div class="fi-icon">❤️</div>
+      <div class="fi-tag">Wishlist Module</div>
+      <h3>Wishlist System</h3>
+      <p>Add blood banks to your wishlist when searching for specific blood types. Blood banks can monitor incoming requests.</p>
+    </div>
+    <div class="feature-item reveal">
+      <div class="fi-icon">📊</div>
+      <div class="fi-tag">Data Module</div>
+      <h3>Excel Storage</h3>
+      <p>All donations, requests, wishlists and user data are stored in structured Excel sheets for transparency and reporting.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title reveal">Module-by-Module <span>Breakdown</span></h2>
+  <div class="module-accordion reveal">
+    {% set modules = [
+      ('🔐', 'Authentication (Login / Signup)', 'Two HTML pages — login.html and signup.html. Users choose a role: Donor/Patient or Hospital/Blood Bank. Passwords are securely hashed with generate_password_hash from Werkzeug. On login, the role is stored in Flask session to control page access. If wrong credentials are entered, a flash error message appears.'),
+      ('🏠', 'Home Page (index.html)', 'The landing page with an animated hero section, stats bar, "How It Works" steps, blood type quick-search cards, and a hospital CTA. Includes particle animation background and scroll-reveal effects on all sections.'),
+      ('🏥', 'Hospital Dashboard (hospital_dashboard.html)', 'After login, hospitals see their uploaded blood inventory in a table. They can upload new blood type availability using upload_blood.html. Data is saved to the HospitalBlood sheet in blood_data.xlsx.'),
+      ('📤', 'Upload Blood (upload_blood.html)', 'A form for hospitals to upload: blood type, units available, location (area in Chennai), and contact number. Saved to Excel with timestamp. Each upload creates a new row allowing history tracking.'),
+      ('👤', 'User Dashboard (user_dashboard.html)', 'After user login, two big action cards: Donate Blood and Need Blood. Also shows quick links to wishlist, about, and blood banks. Displays donation rules (8-week rule, eligibility).'),
+      ('💉', 'Donate Blood (donate.html)', 'Lists all 10 Chennai blood banks with their accepted blood types. User selects one, fills in their name, phone, and blood type. The system checks the 8-week cooldown from last donation. If eligible, registers and saves to Donations sheet.'),
+      ('🔎', 'Need Blood (need_blood.html)', 'Blood type filter buttons at the top. Click any type (A+, B-, O+, etc.) to see banks that have that type. Each result card shows bank name, location, contact, blood types available. Users can call directly or add to Wishlist.'),
+      ('❤️', 'Wishlist (wishlist.html)', 'Displays all blood banks the user has bookmarked for a specific blood type. Each wishlist item shows the bank name, blood type, and date added. Remove button to clean up the list. Stored in Wishlist sheet in Excel.'),
+    ] %}
+    {% for icon, title, desc in modules %}
+    <div class="module-item" onclick="toggleModule(this)">
+      <div class="module-header">
+        <h3>{{ icon }} {{ title }}</h3>
+        <i class="fas fa-chevron-down" style="color:rgba(255,255,255,0.4);transition:transform 0.3s"></i>
+      </div>
+      <div class="module-body">{{ desc }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section">
+  <h2 class="section-title reveal">Tech <span>Stack</span></h2>
+  <div class="tech-stack reveal">
+    <span class="tech-badge">🐍 Python 3</span>
+    <span class="tech-badge">🌶️ Flask</span>
+    <span class="tech-badge">📊 Pandas</span>
+    <span class="tech-badge">📁 OpenPyXL</span>
+    <span class="tech-badge">🔐 Werkzeug</span>
+    <span class="tech-badge">🎨 HTML5/CSS3</span>
+    <span class="tech-badge">⚡ JavaScript</span>
+    <span class="tech-badge">📍 Chennai Blood Banks</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleModule(el) {
+  const body = el.querySelector('.module-body');
+  const icon = el.querySelector('.fa-chevron-down');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.module-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.module-item').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.fa-chevron-down').forEach(i => i.style.transform = '');
+  if (!isOpen) {
+    body.classList.add('open');
+    el.classList.add('active');
+    icon.style.transform = 'rotate(180deg)';
+  }
+}
+</script>
+{% endblock %}

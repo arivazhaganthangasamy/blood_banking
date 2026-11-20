@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block title %}LifeStream - Save Lives in Chennai{% endblock %}
+
+{% block extra_css %}
+<style>
+/* HERO */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-video-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+}
+.hero-video-bg video {
+  width: 100%; height: 100%; object-fit: cover; opacity: 0.18;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(192,57,43,0.15) 0%, rgba(26,10,10,0.85) 70%);
+  z-index: 1;
+}
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center; padding: 2rem;
+  max-width: 900px; margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.4);
+  padding: 6px 18px; border-radius: 30px;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 2px;
+  color: var(--red-light); text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  animation: fadeDown 0.8s ease 0.2s both;
+}
+@keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 700; line-height: 1.1;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.9s ease 0.4s both;
+}
+.hero h1 em { color: var(--red-light); font-style: italic; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+.hero p {
+  font-size: 1.1rem; color: rgba(255,255,255,0.65);
+  line-height: 1.7; margin-bottom: 2.5rem;
+  animation: fadeUp 0.9s ease 0.6s both;
+}
+.hero-btns {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.9s ease 0.8s both;
+}
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  z-index: 2; animation: bounce 2s infinite;
+  color: rgba(255,255,255,0.4); font-size: 1.5rem;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* STATS BAR */
+.stats-bar {
+  background: linear-gradient(135deg, var(--red-dark), #6b1a1a);
+  padding: 2rem;
+}
+.stats-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; text-align: center;
+}
+.stat-item .num {
+  font-size: 2.2rem; font-weight: 900;
+  font-family: 'Playfair Display', serif;
+}
+.stat-item .lbl {
+  font-size: 0.78rem; color: rgba(255,255,255,0.7);
+  text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;
+}
+
+/* HOW IT WORKS */
+.steps-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem; margin-top: 2rem;
+}
+.step-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 16px; padding: 2rem 1.5rem; text-align: center;
+  position: relative; overflow: hidden;
+  transition: all 0.3s;
+}
+.step-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--red), transparent);
+}
+.step-card:hover { border-color: var(--red); transform: translateY(-5px); }
+.step-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(192,57,43,0.15); border: 2px solid rgba(192,57,43,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin: 0 auto 1.2rem;
+}
+.step-num {
+  position: absolute; top: 1rem; right: 1rem;
+  font-size: 3rem; font-weight: 900;
+  color: rgba(192,57,43,0.1); font-family: 'Playfair Display', serif;
+}
+.step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.step-card p { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+/* BLOOD TYPES SECTION */
+.blood-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  margin-top: 2rem;
+}
+.blood-card {
+  background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 12px; padding: 1.5rem; text-align: center;
+  cursor: pointer; transition: all 0.3s; text-decoration: none; color: white;
+}
+.blood-card:hover {
+  background: rgba(192,57,43,0.2); border-color: var(--red);
+  transform: scale(1.05);
+}
+.blood-type-big {
+  font-size: 2rem; font-weight: 900; color: var(--red-light);
+  font-family: 'Playfair Display', serif;
+}
+.blood-card small { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
+
+/* CTA BAND */
+.cta-band {
+  background: linear-gradient(135deg, rgba(192,57,43,0.2), rgba(192,57,43,0.05));
+  border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 20px; padding: 3rem 2rem; text-align: center; margin: 2rem 0;
+}
+.cta-band h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 1rem; }
+.cta-band p { color: rgba(255,255,255,0.6); margin-bottom: 1.5rem; }
+
+@media (max-width: 768px) {
+  .stats-inner { grid-template-columns: repeat(2,1fr); }
+  .blood-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-video-bg">
+    <!-- Animated SVG as video background substitute -->
+    <svg viewBox="0 0 1440 800" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.3">
+      <defs>
+        <radialGradient id="g1" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0392b" stop-opacity="0.6"/><stop offset="100%" stop-color="#1a0a0a" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1440" height="800" fill="url(#g1)"/>
+      <g opacity="0.4">
+        <circle cx="200" cy="400" r="180" fill="none" stroke="#c0392b" stroke-width="1">
+          <animate attributeName="r" values="180;220;180" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.4;0.1;0.4" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="1200" cy="300" r="150" fill="none" stroke="#c0392b" stroke-width="1">
+          <animate attributeName="r" values="150;190;150" dur="8s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="720" cy="600" r="200" fill="none" stroke="#922b21" stroke-width="0.5">
+          <animate attributeName="r" values="200;260;200" dur="10s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </svg>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <i class="fas fa-tint"></i> Chennai Blood Donation Network
+    </div>
+    <h1>Give Blood,<br><em>Give Life</em><br>Save the World</h1>
+    <p>Connect donors with blood banks across Chennai. Every donation saves up to 3 lives.<br>Be the reason someone sees tomorrow.</p>
+    <div class="hero-btns">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('donate') }}" class="btn btn-primary"><i class="fas fa-tint"></i> Donate Blood Now</a>
+        <a href="{{ url_for('need_blood') }}" class="btn btn-outline"><i class="fas fa-search"></i> Find Blood</a>
+      {% else %}
+        <a href="{{ url_for('signup') }}" class="btn btn-primary"><i class="fas fa-heart"></i> Start Saving Lives</a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Login</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="num" data-count="10">0</div>
+      <div class="lbl">Blood Banks</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="num" data-count="8">0</div>
+      <div class="lbl">Blood Types</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="num" data-count="1000">0</div>
+      <div class="lbl">Lives Saved</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="num" data-count="24">0</div>
+      <div class="lbl">Hours Available</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+  <h2 class="section-title reveal">How <span>It Works</span></h2>
+  <p class="section-sub reveal">Simple steps to donate blood or find the blood you need</p>
+  <div class="steps-grid">
+    <div class="step-card reveal">
+      <div class="step-num">01</div>
+      <div class="step-icon">👤</div>
+      <h3>Create Account</h3>
+      <p>Sign up as a donor or hospital. Secure and easy registration.</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">02</div>
+      <div class="step-icon">🩸</div>
+      <h3>Choose Action</h3>
+      <p>Donate blood to a Chennai blood bank or search for available blood.</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">03</div>
+      <div class="step-icon">📍</div>
+      <h3>Find Location</h3>
+      <p>See nearby blood banks with contact numbers and live availability.</p>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">04</div>
+      <div class="step-icon">❤️</div>
+      <h3>Save a Life</h3>
+      <p>Complete your donation. Every 8 weeks you can donate again.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BLOOD TYPES -->
+<div class="section">
+  <h2 class="section-title reveal">Find Blood by <span>Type</span></h2>
+  <p class="section-sub reveal">Click any blood type to see available banks in Chennai</p>
+  <div class="blood-grid">
+    {% for bt in ['A+','A-','B+','B-','O+','O-','AB+','AB-'] %}
+    <a href="{{ url_for('need_blood') }}?blood_type={{ bt }}" class="blood-card reveal">
+      <div class="blood-type-big">{{ bt }}</div>
+      <small>Find donors</small>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section">
+  <div class="cta-band reveal">
+    <h2>Are You a Hospital or Blood Bank?</h2>
+    <p>Upload your available blood inventory and connect with patients who need it most.</p>
+    <a href="{{ url_for('signup') }}?role=hospital" class="btn btn-primary"><i class="fas fa-hospital"></i> Register as Hospital</a>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Count up animation
+function countUp(el, target, duration=2000) {
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target + (target >= 1000 ? '+' : ''); clearInterval(timer); return; }
+    el.textContent = Math.floor(start) + (target >= 1000 ? '+' : '');
+  }, 16);
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('[data-count]');
+      nums.forEach(n => countUp(n, parseInt(n.dataset.count)));
+      obs.disconnect();
+    }
+  });
+});
+document.querySelector('.stats-inner') && obs.observe(document.querySelector('.stats-inner'));
+</script>
+{% endblock %}
